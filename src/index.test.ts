@@ -1,7 +1,12 @@
+import assert from "assert";
 import { ApolloServer } from "@apollo/server";
 
 import { typeDefs } from "./schema";
 import { resolvers } from "./resolvers";
+
+type User = { age: number; email: string; id: string; name: string };
+type ListUsersData = { listUsers: User[] };
+type GetUserData = { getUser: Omit<User, "name"> | null };
 
 describe("listUsers", () => {
   let server: ApolloServer;
@@ -14,7 +19,7 @@ describe("listUsers", () => {
   });
 
   it("validate we can get all the users", async () => {
-    const users = await server.executeOperation({
+    const users = await server.executeOperation<ListUsersData>({
       query: `
             query ExampleQuery($limit: Int) {
                 listUsers(limit: $limit) {
@@ -30,11 +35,12 @@ describe("listUsers", () => {
       },
     });
 
-    expect(users.body.singleResult.data.listUsers.length).toEqual(4);
+    assert(users.body.kind === "single");
+    expect(users.body.singleResult.data!.listUsers.length).toEqual(4);
   });
 
   it("it correctly limits the input", async () => {
-    const users = await server.executeOperation({
+    const users = await server.executeOperation<ListUsersData>({
       query: `
             query ExampleQuery($limit: Int) {
                 listUsers(limit: $limit) {
@@ -50,7 +56,8 @@ describe("listUsers", () => {
       },
     });
 
-    expect(users.body.singleResult.data.listUsers.length).toEqual(1);
+    assert(users.body.kind === "single");
+    expect(users.body.singleResult.data!.listUsers.length).toEqual(1);
   });
 });
 
@@ -65,7 +72,7 @@ describe("getUser", () => {
   });
 
   it("getting a single user by id", async () => {
-    const user = await server.executeOperation({
+    const user = await server.executeOperation<GetUserData>({
       query: `
             query ExampleQuery($id: ID!) {
               getUser(id: $id) {
@@ -80,7 +87,8 @@ describe("getUser", () => {
       },
     });
 
-    expect(user.body.singleResult.data.getUser).toEqual({
+    assert(user.body.kind === "single");
+    expect(user.body.singleResult.data!.getUser).toEqual({
       id: "1",
       email: "lucianompj1@gmail.com",
       age: 20,
@@ -88,7 +96,7 @@ describe("getUser", () => {
   });
 
   it("whenever a user is not found, return null", async () => {
-    const user = await server.executeOperation({
+    const user = await server.executeOperation<GetUserData>({
       query: `
             query ExampleQuery($getUserId: ID) {
               getUser(id: $getUserId) {
@@ -103,11 +111,12 @@ describe("getUser", () => {
       },
     });
 
+    assert(user.body.kind === "single");
     expect(user.body.singleResult.data).toBeUndefined();
   });
 
   it("handles cases where an invalid ID is sent", async () => {
-    const queryResult = await server.executeOperation({
+    const queryResult = await server.executeOperation<GetUserData>({
       query: `
             query ExampleQuery($getUserId: ID!) {
               getUser(id: $getUserId) {
@@ -123,7 +132,8 @@ describe("getUser", () => {
       },
     });
 
-    expect(queryResult.body.singleResult.errors[0].message).toEqual(
+    assert(queryResult.body.kind === "single");
+    expect(queryResult.body.singleResult.errors![0].message).toEqual(
       'Cannot query field "INVALID_KEY" on type "User".',
     );
   });
