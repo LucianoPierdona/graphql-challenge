@@ -4,7 +4,7 @@
   "description": "Description: You are tasked with creating a minimal GraphQL API server and an automated test suite to validate its functionality, performance, and security aspects. This challenge focuses on your ability to design GraphQL schemas, implement resolvers, and write robust automated tests using TypeScript and Node.js.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "tsc",
     "start": "node dist/index.js"
   },

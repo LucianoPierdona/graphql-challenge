@@ -90,7 +90,7 @@ describe("getUser", () => {
     assert(user.body.kind === "single");
     expect(user.body.singleResult.data!.getUser).toEqual({
       id: "1",
-      email: "lucianompj1@gmail.com",
+      email: "luciano@example.com",
       age: 20,
     });
   });
@@ -98,7 +98,7 @@ describe("getUser", () => {
   it("whenever a user is not found, return null", async () => {
     const user = await server.executeOperation<GetUserData>({
       query: `
-            query ExampleQuery($getUserId: ID) {
+            query ExampleQuery($getUserId: ID!) {
               getUser(id: $getUserId) {
                     age
                     email
@@ -112,7 +112,7 @@ describe("getUser", () => {
     });
 
     assert(user.body.kind === "single");
-    expect(user.body.singleResult.data).toBeUndefined();
+    expect(user.body.singleResult.data!.getUser).toBeNull();
   });
 
   it("handles cases where an invalid ID is sent", async () => {
@@ -136,5 +136,33 @@ describe("getUser", () => {
     expect(queryResult.body.singleResult.errors![0].message).toEqual(
       'Cannot query field "INVALID_KEY" on type "User".',
     );
+  });
+});
+
+describe("performance", () => {
+  let server: ApolloServer;
+
+  beforeEach(() => {
+    server = new ApolloServer({
+      typeDefs,
+      resolvers,
+    });
+  });
+
+  it("resolves listUsers within 100ms", async () => {
+    const start = Date.now();
+    await server.executeOperation<ListUsersData>({
+      query: `
+            query {
+                listUsers {
+                    id
+                    name
+                    email
+                    age
+                }
+            }
+        `,
+    });
+    expect(Date.now() - start).toBeLessThan(100);
   });
 });

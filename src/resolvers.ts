@@ -1,34 +1,34 @@
 const users = [
   {
-    id: 1,
+    id: "1",
     name: "Luciano Pierdona",
-    email: "lucianompj1@gmail.com",
+    email: "luciano@example.com",
     age: 20,
   },
   {
-    id: 2,
+    id: "2",
     name: "Marcos Pierdona",
-    email: "lucianompj1@gmail.com",
-    age: 20,
+    email: "marcos@example.com",
+    age: 35,
   },
   {
-    id: 3,
+    id: "3",
     name: "Junior Pierdona",
-    email: "lucianompj1@gmail.com",
-    age: 20,
+    email: "junior@example.com",
+    age: 28,
   },
   {
-    id: 4,
+    id: "4",
     name: "Test Pierdona",
-    email: "lucianompj1@gmail.com",
-    age: 20,
+    email: "test@example.com",
+    age: 42,
   },
 ];
 
 const resolvers = {
   Query: {
     getUser: (_: any, { id }: { id: string }) => {
-      return users.find((user) => user.id.toString() === id);
+      return users.find((user) => user.id === id) ?? null;
     },
     listUsers: (_: any, { limit }: { limit: number }) => users.slice(0, limit),
   },
