@@ -1,0 +1,24 @@
+{
+  "name": "interview",
+  "version": "1.0.0",
+  "description": "Description: You are tasked with creating a minimal GraphQL API server and an automated test suite to validate its functionality, performance, and security aspects. This challenge focuses on your ability to design GraphQL schemas, implement resolvers, and write robust automated tests using TypeScript and Node.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^5.5.0",
+    "graphql": "^16.13.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.5.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^6.0.2"
+  }
+}
